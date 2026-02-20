@@ -1,0 +1,73 @@
+@startuml Parallel
+title Диаграмма состояний потоков
+
+state "Главный поток" as main
+
+state "Поток 0" as t0 {
+  state "Инициализация" as t0_init
+  state "Вычисление" as t0_calc
+  state "Ожидание" as t0_wait
+  state "Завершение" as t0_end
+  
+  [*] --> t0_init
+  t0_init --> t0_calc
+  t0_calc --> t0_wait
+  t0_wait --> t0_end
+  t0_end --> [*]
+}
+
+state "Поток 1" as t1 {
+  state "Инициализация" as t1_init
+  state "Вычисление" as t1_calc
+  state "Ожидание" as t1_wait
+  state "Завершение" as t1_end
+  
+  [*] --> t1_init
+  t1_init --> t1_calc
+  t1_calc --> t1_wait
+  t1_wait --> t1_end
+  t1_end --> [*]
+}
+
+state "Поток 2" as t2 {
+  state "Инициализация" as t2_init
+  state "Вычисление" as t2_calc
+  state "Ожидание" as t2_wait
+  state "Завершение" as t2_end
+  
+  [*] --> t2_init
+  t2_init --> t2_calc
+  t2_calc --> t2_wait
+  t2_wait --> t2_end
+  t2_end --> [*]
+}
+
+state "Поток 3" as t3 {
+  state "Инициализация" as t3_init
+  state "Вычисление" as t3_calc
+  state "Ожидание" as t3_wait
+  state "Завершение" as t3_end
+  
+  [*] --> t3_init
+  t3_init --> t3_calc
+  t3_calc --> t3_wait
+  t3_wait --> t3_end
+  t3_end --> [*]
+}
+
+main --> t0_init
+main --> t1_init
+main --> t2_init
+main --> t3_init
+
+t0_end --> main
+t1_end --> main
+t2_end --> main
+t3_end --> main
+
+note right of t0_wait
+  Барьер
+  Ожидание всех потоков
+end note
+
+@enduml

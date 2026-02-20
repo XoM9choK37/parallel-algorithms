@@ -1,0 +1,58 @@
+@startuml Parallel Block
+title Блочное распараллеливание (схема данных)
+
+rectangle "Матрица A" {
+  rectangle "A11" as A11
+  rectangle "A12" as A12
+  rectangle "A21" as A21
+  rectangle "A22" as A22
+}
+
+rectangle "Матрица B" {
+  rectangle "B11" as B11
+  rectangle "B12" as B12
+  rectangle "B21" as B21
+  rectangle "B22" as B22
+}
+
+rectangle "Матрица C" {
+  rectangle "C11 = A11×B11 + A12×B21" as C11
+  rectangle "C12 = A11×B12 + A12×B22" as C12
+  rectangle "C21 = A21×B11 + A22×B21" as C21
+  rectangle "C22 = A21×B12 + A22×B22" as C22
+}
+
+A11 --> C11
+A12 --> C11
+B11 --> C11
+B21 --> C11
+
+A11 --> C12
+A12 --> C12
+B12 --> C12
+B22 --> C12
+
+A21 --> C21
+A22 --> C21
+B11 --> C21
+B21 --> C21
+
+A21 --> C22
+A22 --> C22
+B12 --> C22
+B22 --> C22
+
+note bottom of C11
+  Поток 0 вычисляет
+end note
+note bottom of C12
+  Поток 1 вычисляет
+end note
+note bottom of C21
+  Поток 2 вычисляет
+end note
+note bottom of C22
+  Поток 3 вычисляет
+end note
+
+@enduml

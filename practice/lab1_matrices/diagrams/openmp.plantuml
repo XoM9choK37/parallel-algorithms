@@ -1,0 +1,41 @@
+@startuml OpenMP
+title Диаграмма последовательности с синхронизацией
+
+participant "Главный поток" as main
+participant "Поток 0" as t0
+participant "Поток 1" as t1
+participant "Поток 2" as t2
+participant "Поток 3" as t3
+
+main -> main: #pragma omp parallel
+main -> t0: Создать
+main -> t1: Создать
+main -> t2: Создать
+main -> t3: Создать
+
+t0 -> t0: Вычисление
+t1 -> t1: Вычисление
+t2 -> t2: Вычисление
+t3 -> t3: Вычисление
+
+t0 -> t0: #pragma omp barrier
+t1 -> t1: #pragma omp barrier
+t2 -> t2: #pragma omp barrier
+t3 -> t3: #pragma omp barrier
+
+note over t0: Ожидание
+note over t1: Ожидание
+note over t2: Ожидание
+note over t3: Ожидание
+
+t0 -> t0: Продолжение
+t1 -> t1: Продолжение
+t2 -> t2: Продолжение
+t3 -> t3: Продолжение
+
+t0 -> main: Завершен
+t1 -> main: Завершен
+t2 -> main: Завершен
+t3 -> main: Завершен
+
+@enduml
