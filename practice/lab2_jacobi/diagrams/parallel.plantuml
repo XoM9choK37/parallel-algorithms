@@ -1,0 +1,29 @@
+@startuml Parallel
+title Graph of Parallel Jacobi Algorithm
+
+start
+:Initialize x[0], x_new[0];
+:Set iteration = 0;
+while (error > EPSILON && iteration < MAX_ITER) is (true)
+  :error = 0;
+  fork
+    :i = 0 .. n/4-1;
+    :Compute x_new[i] and partial error;
+  fork again
+    :i = n/4 .. n/2-1;
+    :Compute x_new[i] and partial error;
+  fork again
+    :i = n/2 .. 3n/4-1;
+    :Compute x_new[i] and partial error;
+  fork again
+    :i = 3n/4 .. n-1;
+    :Compute x_new[i] and partial error;
+  end fork
+  :Reduce partial errors to total error;
+  :error = sqrt(error);
+  :swap(x, x_new);
+  :iteration++;
+endwhile (false)
+:Output x;
+stop
+@enduml

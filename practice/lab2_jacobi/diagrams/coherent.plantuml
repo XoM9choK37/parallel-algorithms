@@ -1,0 +1,30 @@
+@startuml Coherent
+title Graph of Sequential Jacobi Algorithm
+
+start
+:Initialize x[0], x_new[0];
+:Set iteration = 0;
+while (error > EPSILON && iteration < MAX_ITER) is (true)
+  :error = 0;
+  :i = 0;
+  while (i < n) is (true)
+    :sum = 0;
+    :j = 0;
+    while (j < n) is (true)
+      if (i != j) then (yes)
+        :sum += A[i][j] * x[j];
+      else (no)
+      endif
+      :j++;
+    endwhile (false)
+    :x_new[i] = (b[i] - sum) / A[i][i];
+    :error += (x_new[i] - x[i])^2;
+    :i++;
+  endwhile (false)
+  :error = sqrt(error);
+  :swap(x, x_new);
+  :iteration++;
+endwhile (false)
+:Output x;
+stop
+@enduml

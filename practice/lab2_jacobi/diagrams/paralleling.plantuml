@@ -1,0 +1,62 @@
+@startuml Paralleling
+title Parallelization Scheme for Jacobi Method
+
+actor "Master Thread" as master
+database "Vector x" as x
+
+master -> x : Read initial vector
+
+== Parallel Computation Phase ==
+
+box "Parallel Region" #LightGray
+  participant "Thread 0\n(Chunk 0)" as t0
+  participant "Thread 1\n(Chunk 1)" as t1
+  participant "Thread 2\n(Chunk 2)" as t2
+  participant "Thread 3\n(Chunk 3)" as t3
+end box
+
+x -> t0 : Read x
+x -> t1 : Read x
+x -> t2 : Read x
+x -> t3 : Read x
+
+note over t0
+  Compute chunk 0:
+  i = 0 to m-1
+  x_new[i] = (b[i] - sum)/A[i][i]
+end note
+
+note over t1
+  Compute chunk 1:
+  i = m to 2m-1
+  x_new[i] = (b[i] - sum)/A[i][i]
+end note
+
+note over t2
+  Compute chunk 2:
+  i = 2m to 3m-1
+  x_new[i] = (b[i] - sum)/A[i][i]
+end note
+
+note over t3
+  Compute chunk 3:
+  i = 3m to n-1
+  x_new[i] = (b[i] - sum)/A[i][i]
+end note
+
+t0 -> x : Write results
+t1 -> x : Write results
+t2 -> x : Write results
+t3 -> x : Write results
+
+== Synchronization ==
+
+master -> x : Barrier sync & swap
+
+note right of master
+  m = n/4
+  All threads execute in parallel
+  No dependencies between threads
+end note
+
+@enduml

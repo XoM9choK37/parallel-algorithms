@@ -1,0 +1,43 @@
+@startuml Dependencies
+title Data Dependencies in Jacobi Algorithm
+
+package "Iteration k" {
+  component x0_k as "x[0] (k)"
+  component x1_k as "x[1] (k)"
+  component x2_k as "x[2] (k)"
+  component xn_k as "x[n-1] (k)"
+}
+
+package "Iteration k+1" {
+  component x0_k1 as "x[0] (k+1)"
+  component x1_k1 as "x[1] (k+1)"
+  component x2_k1 as "x[2] (k+1)"
+  component xn_k1 as "x[n-1] (k+1)"
+}
+
+x0_k --> x0_k1 : depends on
+x1_k --> x0_k1
+x2_k --> x0_k1
+xn_k --> x0_k1
+
+x0_k --> x1_k1
+x1_k --> x1_k1
+x2_k --> x1_k1
+xn_k --> x1_k1
+
+x0_k --> x2_k1
+x1_k --> x2_k1
+x2_k --> x2_k1
+xn_k --> x2_k1
+
+x0_k --> xn_k1
+x1_k --> xn_k1
+x2_k --> xn_k1
+xn_k --> xn_k1
+
+note right of x0_k1
+  Each new value depends
+  on all previous values
+  (data parallelism across i)
+end note
+@enduml
