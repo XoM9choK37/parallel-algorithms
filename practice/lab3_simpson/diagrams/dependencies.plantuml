@@ -1,0 +1,70 @@
+@startuml Dependencies
+left to right direction
+
+rectangle "Алгоритм Симпсона" {
+  
+  package "Этапы вычислений" {
+    rectangle "Подготовительный этап" as PREP {
+      rectangle "Ввод параметров" as INPUT
+      rectangle "Проверка четности n" as CHECK
+      rectangle "Вычисление шага h" as STEP
+    }
+    
+    rectangle "Основной цикл" as MAIN {
+      rectangle "Вычисление координаты x" as X
+      rectangle "Вычисление f(x)" as F
+      rectangle "Умножение на коэффициент" as COEFF
+      rectangle "Добавление к сумме" as ADD
+    }
+    
+    rectangle "Завершающий этап" as FINAL {
+      rectangle "Умножение на h/3" as MULT
+      rectangle "Вывод результата" as OUTPUT
+    }
+  }
+  
+  package "Анализ зависимостей" {
+    note top of PREP
+      <b>Подготовительный этап:</b>
+      • Нет зависимостей между шагами
+      • Выполняется строго последовательно
+      • Требуется для инициализации
+    end note
+    
+    note top of MAIN
+      <b>Основной цикл:</b>
+      
+      <b>ЗАВИСИМОСТИ:</b>
+      • Каждая итерация зависит только от i
+      • Нет зависимости между итерациями
+      • Переменная sum - редукционная
+      
+      <b>ВОЗМОЖНОСТИ:</b>
+      • Распределение итераций между потоками
+      • Использование локальных сумм
+      • Применение редукции OpenMP
+    end note
+    
+    note top of FINAL
+      <b>Завершающий этап:</b>
+      • Зависит от общей суммы sum
+      • Выполняется последовательно
+      • Минимальные вычислительные затраты
+    end note
+  }
+  
+  package "Стратегия распараллеливания" {
+    rectangle "Распределение итераций цикла" as DISTRIB
+    rectangle "Локальные суммы для потоков" as LOCAL
+    rectangle "Критическая секция/редукция" as REDUCE
+    rectangle "Сбор результатов" as COLLECT
+  }
+}
+
+PREP --> MAIN : Параметры a, b, h, n
+MAIN --> FINAL : Общая сумма
+DISTRIB --> MAIN : Применение
+LOCAL --> MAIN : Использование
+REDUCE --> MAIN : Синхронизация
+
+@enduml

@@ -1,0 +1,26 @@
+@startuml Coherent
+title Граф последовательного алгоритма Симпсона
+
+start
+:Ввод a, b, n;
+:Проверка четности n;
+:Вычисление шага h = (b-a)/n;
+:Инициализация суммы = f(a) + f(b);
+:Установка i = 1;
+
+while (i < n?) is (да)
+    :Вычисление x = a + i*h;
+    
+    if (i четное?) then (да)
+        :sum += 2 * f(x);
+    else (нет)
+        :sum += 4 * f(x);
+    endif
+    
+    :i = i + 1;
+endwhile (нет)
+
+:result = (h/3) * sum;
+:Вывод result;
+stop
+@enduml

@@ -1,0 +1,66 @@
+@startuml Parallel
+start
+:Ввод a, b, n, num_threads;
+
+if (n % 2 != 0) then (да)
+  :n = n + 1;
+endif
+
+:h = (b - a) / n;
+:sum = f(a) + f(b);
+:omp_set_num_threads(num_threads);
+
+fork
+  :Поток 0;
+  :local_sum = 0;
+  :i = 1;
+  while (i < n)
+    :x = a + i * h;
+    if (i % 2 == 0) then (да)
+      :local_sum = local_sum + 2 * f(x);
+    else (нет)
+      :local_sum = local_sum + 4 * f(x);
+    endif
+    :i = i + num_threads;
+  endwhile
+  :critical_section;
+  :sum = sum + local_sum;
+fork again
+  :Поток 1;
+  :local_sum = 0;
+  :i = 2;
+  while (i < n)
+    :x = a + i * h;
+    if (i % 2 == 0) then (да)
+      :local_sum = local_sum + 2 * f(x);
+    else (нет)
+      :local_sum = local_sum + 4 * f(x);
+    endif
+    :i = i + num_threads;
+  endwhile
+  :critical_section;
+  :sum = sum + local_sum;
+fork again
+  :Поток ...;
+  :...;
+fork again
+  :Поток num_threads-1;
+  :local_sum = 0;
+  :i = num_threads;
+  while (i < n)
+    :x = a + i * h;
+    if (i % 2 == 0) then (да)
+      :local_sum = local_sum + 2 * f(x);
+    else (нет)
+      :local_sum = local_sum + 4 * f(x);
+    endif
+    :i = i + num_threads;
+  endwhile
+  :critical_section;
+  :sum = sum + local_sum;
+end fork
+
+:result = (h / 3) * sum;
+:Вывод result;
+stop
+@enduml
