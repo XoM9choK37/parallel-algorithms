@@ -1,0 +1,16 @@
+@startuml Shell Sort Sequential
+start
+:Установить gap = n/2;
+while (gap >= 1)
+  :for i = gap to n-1
+    :temp = A[i];
+    :j = i;
+    while (j >= gap && A[j-gap] > temp)
+      :A[j] = A[j-gap];
+      :j -= gap;
+    endwhile
+    :A[j] = temp;
+  :gap /= 2;
+endwhile
+stop
+@enduml

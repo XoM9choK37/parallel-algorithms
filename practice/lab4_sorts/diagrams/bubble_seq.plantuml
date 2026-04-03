@@ -1,0 +1,18 @@
+@startuml Bubble Sort Sequential
+start
+:Инициализация массива;
+repeat
+  :swapped = false;
+  repeat
+    :Сравнить A[i] и A[i+1];
+    if (A[i] > A[i+1]) then (да)
+      :Обменять;
+      :swapped = true;
+    else (нет)
+    endif
+    :i++;
+  repeat while (i < n-1)  
+  :n--;
+while (swapped == true)
+stop
+@enduml

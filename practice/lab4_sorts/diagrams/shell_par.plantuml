@@ -1,0 +1,16 @@
+@startuml Shell Sort Parallel
+start
+:gap = n/2;
+while (gap >= 1)
+  :#pragma omp parallel for;
+  fork
+    :Поток 0: сортировка подпоследовательности (0, gap, 2gap, ...);
+    :Поток 1: сортировка подпоследовательности (1, 1+gap, 1+2gap, ...);
+    :Поток 2: сортировка подпоследовательности (2, 2+gap, 2+2gap, ...);
+    :...;
+    :Поток (gap-1): сортировка подпоследовательности (gap-1, ...);
+  end fork
+  :gap = gap / 2;
+endwhile
+stop
+@enduml

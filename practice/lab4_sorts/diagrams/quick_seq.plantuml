@@ -1,0 +1,9 @@
+@startuml Quick Sort Sequential
+start
+:partition(A, low, high);
+:Выбрать опорный элемент;
+:Разделить массив;
+:Рекурсивно quicksort(A, low, pi-1);
+:Рекурсивно quicksort(A, pi+1, high);
+stop
+@enduml

@@ -1,0 +1,21 @@
+@startuml Quick Sort Parallel
+start
+if (low < high) then (да)
+  if (high - low < threshold) then (да)
+    :quick_sort_seq(A, low, high);
+  else (нет)
+    :pi = partition(A, low, high);
+    fork
+      :#pragma omp task;
+      :quick_sort_par(A, low, pi-1);
+    fork again
+      :#pragma omp task;
+      :quick_sort_par(A, pi+1, high);
+    end fork
+    :#pragma omp taskwait;
+  endif
+else (нет)
+  :return;
+endif
+stop
+@enduml
