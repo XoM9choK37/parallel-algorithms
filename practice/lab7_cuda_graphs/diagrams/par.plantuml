@@ -1,0 +1,53 @@
+@startuml Parallel
+title Параллельный алгоритм Флойда-Уоршелла\n(PyCUDA - GPU)
+
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 11
+
+start
+:Вход: матрица dist[N][N] (CPU);
+:Копирование dist → GPU;
+
+:Инициализация k = 0;
+
+while (k < N?) is (да)
+    
+    fork
+        :**GPU Stripe Kernel**\nБлок: 256 потоков\nСетка: N/256 блоков;
+    fork
+        :**GPU Block Kernel**\nБлок: 32 потока\nShared Memory TILE[32];
+    end fork
+    end fork
+    
+    partition "Stripe: параллелизм по строкам i" {
+        :Поток i загружает dist[i][k];
+        if (dist[i][k] == INF?) then (да)
+            :Поток простаивает;
+        else (нет)
+            :for (j=0..N-1)\n  new = dist[i][k] + dist[k][j]\n  if new < dist[i][j]: обновить;
+        endif
+        note right: Нет синхронизации\nмежду потоками
+    }
+    
+    partition "Block: Shared Memory оптимизация" {
+        :Загрузка строки k в Shared Memory;
+        :**__syncthreads()**;
+        :Все потоки блока читают dist[k][j] из Shared Memory;
+        :for (j по тайлам)\n  if dik + tile[j] < dist[i][j]: обновить;
+        :**__syncthreads()**;
+        note right: В 32 раза меньше обращений\nк глобальной памяти
+    }
+    
+    :**cudaDeviceSynchronize()**;
+    note right: Барьер: все потоки\nзавершили этап k
+    
+    :k = k + 1;
+    
+endwhile (нет)
+
+:Копирование dist → CPU;
+:Возврат: матрица кратчайших путей;
+
+stop
+
+@enduml

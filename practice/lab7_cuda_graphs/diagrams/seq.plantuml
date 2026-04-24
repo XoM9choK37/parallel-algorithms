@@ -1,0 +1,38 @@
+@startuml Sequence
+title Последовательный алгоритм Флойда-Уоршелла\n(Floyd-Warshall - CPU)
+
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 12
+
+start
+:Вход: матрица расстояний dist[N][N];
+:Инициализация: INF для несвязных вершин;
+
+partition "Внешний цикл - промежуточная вершина" {
+    :**k = 0..N-1**;
+    note right: Этап k использует\nрезультаты этапа k-1
+}
+
+partition "Средний цикл - исходная вершина" {
+    :**i = 0..N-1**;
+    if (dist[i][k] == INF?) then (да)
+        :continue (пропустить);
+    endif
+}
+
+partition "Внутренний цикл - целевая вершина" {
+    :**j = 0..N-1**;
+    if (dist[k][j] == INF?) then (да)
+        :continue (пропустить);
+    endif
+    :new = dist[i][k] + dist[k][j];
+    if (new < dist[i][j]?) then (да)
+        :dist[i][j] = new\n(улучшили путь);
+    endif
+}
+
+:Возврат: матрица кратчайших путей;
+
+stop
+
+@enduml

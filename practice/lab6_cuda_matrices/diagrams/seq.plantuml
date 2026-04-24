@@ -1,0 +1,28 @@
+@startuml Sequence
+title Последовательное умножение матриц\n(DOT Product - CPU)
+
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 12
+
+start
+:Вход: матрицы A[N][N] и B[N][N];
+:Инициализация C[N][N] = 0;
+
+partition "Внешний цикл по строкам результата" {
+    :**i = 0..N-1** (строка C);
+}
+
+partition "Средний цикл по столбцам результата" {
+    :**j = 0..N-1** (столбец C);
+}
+
+partition "Внутренний цикл по элементам для умножения" {
+    :**k = 0..N-1**;
+    :C[i][j] += A[i][k] × B[k][j];
+}
+
+:Возврат: матрица C[N][N];
+
+stop
+
+@enduml

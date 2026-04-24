@@ -1,0 +1,37 @@
+@startuml Parallel
+title Параллельное умножение матриц\n(PyCUDA - GPU)
+
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 11
+
+start
+:Вход: матрицы A[N][N], B[N][N] (CPU);
+:Копирование A, B → GPU (cudaMemcpyHtoD);
+
+fork
+  :**GPU Stripe Kernel**\nБлок 16×16 потоков\nСетка N/16 × N/16 блоков;
+fork
+  :**GPU Block Kernel**\nБлок 32×32 потоков\nShared Memory TILE;
+end fork
+end fork
+
+partition "Ядро Stripe - наивное" {
+    :Поток (row, col) вычисляет C[row][col];
+    :for (k=0..N-1)\n  sum += A[row][k] × B[k][col];
+    note right: Доступ к глобальной памяти\nМного повторных чтений
+}
+
+partition "Ядро Block - оптимизированное" {
+    :Загрузка тайла в Shared Memory;
+    :**__syncthreads()**;
+    :Частичное произведение\nsum += tileA × tileB;
+    :**__syncthreads()**;
+    note right: Сокращение обращений\nк глобальной памяти в ~32 раза
+}
+
+:Копирование C → CPU (cudaMemcpyDtoH);
+:Возврат: матрица C[N][N];
+
+stop
+
+@enduml
